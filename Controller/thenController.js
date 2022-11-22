@@ -1,4 +1,8 @@
-const { makeCorrectUrl, renderHtml } = require("../utils/common.js");
+const {
+  makeCorrectUrl,
+  renderHtml,
+  checkAddressParams,
+} = require("../utils/common.js");
 const { getTitle, getTitles } = require("../Services/thenService");
 const thenController = (req, res) => {
   const address = req.query.address;
@@ -8,14 +12,16 @@ const thenController = (req, res) => {
   if (typeof address === "string") {
     const url = makeCorrectUrl(address);
     getTitle(url)
-      .then((title) => res.status(200).send(renderHtml(title)))
+      .then((title) => res.status(200).send(renderHtml([{ title, address }])))
       .catch((err) => res.status(400).send(err.message));
   } else if (typeof address === "object") {
+    if (!checkAddressParams(req.query))
+      return res.status(400).send("Bad request incorrect params");
     const urls = [];
     address.map((url) => {
       urls.push(makeCorrectUrl(url));
     });
-    getTitles(urls)
+    getTitles(urls, address)
       .then((titles) => res.status(200).send(renderHtml(titles)))
       .catch((err) => res.status(400).send(err.message));
   } else {

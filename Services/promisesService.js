@@ -12,14 +12,19 @@ const getTitle = (url) => {
     reject(new Error("message"));
   });
 };
-const getTitles = (urls) => {
+const getTitles = (urls, address) => {
+  let i = 0;
   const titles = [];
   return new RSVP.Promise((resolve, reject) => {
     resolve(
       axios.all(urls.map((url) => axios.get(url))).then((webPages) => {
         webPages.map((webPage) => {
           const $ = cheerio.load(webPage.data);
-          titles.push($("title").text());
+          titles.push({
+            address: address[i],
+            title: $("title").text(),
+          });
+          i += 1;
         });
         return titles;
       })

@@ -7,15 +7,18 @@ const makeCorrectUrl = (params) => {
   }
 };
 
+const checkAddressParams = (addresses) => {
+  const wrongParams = Object.keys(addresses).filter(
+    (address) => address != "address"
+  );
+  if (wrongParams.length > 0) return false;
+  return true;
+};
+
 const renderHtml = (titles) => {
-  if (typeof titles === "string") {
-    return `<html> <head></head><body> <h1> Following are the titles of given websites: </h1><ul>
-   <li>${titles}</li>
-    </ul></body></html>`;
-  }
   return `<html> <head></head><body> <h1> Following are the titles of given websites: </h1><ul>
-${titles.map((title) => `<li>${title}</li>`)}
+${titles.map((title) => `<li>${title.address} - ${title.title}</li>`)}
 </ul></body></html>`;
 };
 
-module.exports = { makeCorrectUrl, renderHtml };
+module.exports = { makeCorrectUrl, renderHtml, checkAddressParams };
